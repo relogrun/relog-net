@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1] — 2025-10-04
+
+### Added
+
+- **Decimal type (`dec`)**
+  - Fixed-precision decimals: `1.5`, `-0.125`, `1e-3`, `-2.0E+10`. Subtyping: `int ⊆ dec`.
+  - `#compute` functions accept mixed `int`/`dec` (auto-promote to `dec`).
+  - `#rhai` decimal helpers: `dec_add`, `dec_sub`, `dec_mul`, `dec_div`, `dec_gt`, `dec_ge`, `dec_lt`, `dec_le`, `dec_abs`, `dec_min`, `dec_max`.
+  - 
 ## [0.6.0] — 2025-10-03
 
 ### Added
