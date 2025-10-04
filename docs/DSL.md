@@ -5,14 +5,45 @@
 ### Terms
 
 - **Variables:** `let x`. Reusing a var enforces equality, e.g. `pair(let x, let x)`.
-- **Literals:** identifiers (`hello`), strings (`"hello world"`), numbers (`123`).
-  - Strings use double quotes and standard escapes: `\"`, `\\`, `\n`, `\t`, `\u1234`, `\u{1F600}`.
+- **Literals:** identifiers (`hello`), strings (`"hello world"`), numbers (`123`, `1.5`, `-2.0E+10`).
+  - **Strings** use double quotes and standard escapes: `\"`, `\\`, `\n`, `\t`, `\u1234`, `\u{1F600}`.
+  - **Integers:** `[-+]?[0-9]+`
+  - **Decimals:** either plain decimal `[-+]?[0-9]+"."?[0-9]+` or scientific notation  
+    `[-+]? <mantissa> ("e"|"E") [+-]? <exponent>`, where `<mantissa>` is e.g. `123.45` or `123`.  
+    Examples: `1.5`, `-0.125`, `1e-3`, `-2.0E+10`.
+  - The parser/marking **preserves the original literal spelling** (e.g., `1e-3` is not rewritten to `0.001`).
 - **Applications:** n-ary terms, e.g. `foo(bar, baz)`.
-- **Multiplicity:** `* N`. Inputs need **N distinct** matching tokens. Examples:
-  - `in buffer(let x) * 3`
-  - `init { free slot * 3 }`
+- **Multiplicity:** `* N`. Inputs need **N distinct** matching tokens. Outputs produce **N** tokens. Examples:
+  - `in buffer(let x) * 3` — consumes 3 distinct tokens
+  - `out done(result) * 2` — produces 2 tokens
+  - `init { free slot * 3 }` — creates 3 initial tokens
 - **Guards:** `guard <term>` after input matching; the term is algebra-normalized.
   The transition fires only if it becomes `true` (multiple guards allowed).
+
+### Arc modes
+
+Input arcs support:
+
+- **consume** (default) — removes the token
+- **read** — keeps the token (non-destructive read)
+- **inhib** — transition enabled only if token is **absent**
+
+Output arcs support:
+
+- **consume** (default) — adds the token normally
+- **reset** — clears the entire store first, then adds tokens
+
+### Grounding policy
+
+When output terms contain unbound variables after substitution:
+
+- **strict** (default) — step fails with error
+- **skip** — drop this output arc silently
+- **default("value")** — substitute the literal string value (no special chars: `? , ( )`)
+
+### Priority
+
+When multiple transitions are enabled, highest `priority` fires first (default: 0). Ties break by name, then instance order.
 
 ### Algebra & Types (experimental)
 
@@ -22,20 +53,23 @@
   - `operator f { assoc, comm, id(_), rest(let r) }`
     - Canonicalization: flattens `assoc`, drops `id(_)`, sorts `comm` args.
     - Rules: `rule lhs => rhs`. Normalization runs until fixpoint or `max_steps`.
-    - AC matching uses a backtracking budget `ac_branch_budget`; if exhausted, the rule doesn’t apply.
+    - AC matching uses a backtracking budget `ac_branch_budget`; if exhausted, the rule doesn't apply.
   - **All stored tokens are normalized**. Changing algebra re-normalizes the current marking.
-- **Types** (optional) annotate stores: `any | sym | int | bool | head<T...>`.
-  - `sym` covers both identifiers and strings; numbers are `int`, `true/false` are `bool`.
-  - Inputs check compatibility and bind var types; outputs are checked too.
-  - With `grounding strict`, outputs may not introduce unbound vars (except `_`).
+- **Types** (optional) annotate stores: `any | sym | int | dec | bool | head<T...>`.
+  - `any` — no constraints
+  - `sym` — identifiers and string literals
+  - `int` — integers
+  - `dec` — fixed-precision decimals
+  - `bool` — boolean values (`true`, `false`)
+  - **Subtyping:** `int ⊆ dec` — an integer value is accepted wherever `dec` is expected.
 
 ### Compute directives
 
 - **`#compute(...)`** — safe built-ins (math, comparisons, booleans, strings).  
-  Ground-only; returns `int | bool | string`.
-  - Errors in **guards** → guard = `false`. Errors in **outputs** → step fails.
+  Ground-only; returns `int | dec | bool | string`.
+  - Errors in **guards** → guard = `false`. Errors in **outputs** → grounding policy applies.
 - **`#rhai("...script...", args...)`** — inline Rhai script in a sandbox.  
-  Ground-only; args are available as `args` (array); returns `int | bool | string`.
+  Ground-only; args are available as `args` (array); returns `int | dec | bool | string`.
   - Same error semantics as above.
 
 Full compute reference: [COMPUTE.md](./COMPUTE.md)
@@ -114,21 +148,15 @@ init {
 ### Typed stores
 
 ```relog
-// Built-in types: any | sym | int | bool
+// Built-in types: any | sym | int | dec | bool
 // Parametric types: head<T1, T2, ...>
 
 // Stores (typed)
 store produced: item<sym>
+store prices: dec
 store free: sym
 store buf: item<sym>
 store done: pair<sym, sym>
-
-// Algebra (optional)
-algebra {
-  operator set { assoc, comm, id(_), rest(let r) };
-  rule member(let x, set(let x, let r)) => true;
-  rule member(let _, let _) => false;
-}
 
 // Transitions (type-checked)
 transition push {
@@ -138,16 +166,18 @@ transition push {
   out buf(item(let x))
 }
 
-transition pop_pair {
-  in  buf(item(let y)) * 2
-  out done(pair(let y, let y))
-  out free(slot) * 2
+transition check_price {
+  in  prices(let p)
+  guard #compute(gt(let p, 10.0))
+  out expensive(let p)
 }
 
 // Init (type-safe)
 init {
   produced item(hello)
   produced item(world) * 2
+  prices 15.99
+  prices 5.50
   free slot * 2
 }
 ```
