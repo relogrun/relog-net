@@ -1,4 +1,4 @@
-# Relog (Preview)
+# Relog Net (Preview)
 
 **Toy, no-I/O runner** for a tiny DSL for **algebraic token networks**.
 
