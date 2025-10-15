@@ -17,24 +17,24 @@ Grab the archive for your OS from [latest release](https://github.com/relogrun/r
 ```bash
 unzip relog-macos-universal.zip
 cd relog-*
-chmod +x ./relog-cli
+chmod +x ./relog-net
 
 # run a sample
-./relog-cli ./samples/buffer_backpressure.rl --log debug --delay 500
+./relog-net ./samples/buffer_backpressure.rl --log debug --delay 500
 ```
 
 > If macOS shows a quarantine warning:
-> `xattr -dr com.apple.quarantine ./relog-cli`
+> `xattr -dr com.apple.quarantine ./relog-net`
 
 ### Linux (x86_64)
 
 ```bash
 tar -xzf relog-linux-x86_64.tar.gz
 cd relog-*
-chmod +x ./relog-cli
+chmod +x ./relog-net
 
 # run a sample
-./relog-cli ./samples/buffer_backpressure.rl --log debug --delay 500
+./relog-net ./samples/buffer_backpressure.rl --log debug --delay 500
 ```
 
 ### Windows (x86_64)
@@ -44,7 +44,7 @@ Expand-Archive .\relog-windows-x86_64.zip -DestinationPath .\relog
 cd .\relog
 
 # run a sample
-.\relog-cli.exe .\samples\buffer_backpressure.rl --log debug --delay 500
+.\relog-net.exe .\samples\buffer_backpressure.rl --log debug --delay 500
 ```
 
 > If SmartScreen warns about an unknown publisher, choose “More info” → “Run anyway”.
@@ -68,7 +68,7 @@ docker run --rm --platform=linux/amd64 \
   -w /app \
   -u "$(id -u):$(id -g)" \
   debian:stable-slim \
-  /app/relog-cli /app/samples/buffer_backpressure.rl --log debug --delay 500
+  /app/relog-net /app/samples/buffer_backpressure.rl --log debug --delay 500
 ```
 
 ### Windows (PowerShell)
@@ -82,12 +82,12 @@ docker run --rm --platform=linux/amd64 `
   -v "${PWD}:/app:ro" `
   -w /app `
   debian:stable-slim `
-  /app/relog-cli /app/samples/buffer_backpressure.rl --log debug --delay 500
+  /app/relog-net /app/samples/buffer_backpressure.rl --log debug --delay 500
 ```
 
 > Notes:
 >
-> - The command expects you extracted the **Linux** archive into the current directory, so `relog-cli` and `samples/` are present under `./`.
+> - The command expects you extracted the **Linux** archive into the current directory, so `relog-net` and `samples/` are present under `./`.
 > - `--platform=linux/amd64` makes it work on Apple Silicon too.
 > - The container is read-only, has dropped capabilities, no network, a tmpfs `/tmp`, and (on macOS/Linux) runs as your user via `-u`.
 
@@ -102,20 +102,20 @@ There are two modes:
 **Direct mode (`run`)** — execute a single `.rl` locally.
 
 ```bash
-./relog-cli run ./samples/buffer_backpressure.rl --log debug --delay 500
+./relog-net run ./samples/buffer_backpressure.rl --log debug --delay 500
 ```
 
 **Server mode (`serve`)** — start an HTTP + WebSocket API for remote control (pass a base directory or a file inside it).
 
 ```bash
-./relog-cli serve ./samples --port 9000 --log debug
+./relog-net serve ./samples --port 9000 --log debug
 ```
 
 Help:
 
 ```bash
-./relog-cli run --help
-./relog-cli serve --help
+./relog-net run --help
+./relog-net serve --help
 ```
 
 For full details (all flags, API endpoints) see [docs/CLI.md](./docs/CLI.md).

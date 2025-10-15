@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.2] — 2025-10-15
+
+Renamed `relog-cli` -> `relog-net`
+
 ## [0.6.1] — 2025-10-04
 
 ### Added
@@ -61,9 +65,9 @@
 - **CLI split into subcommands**:
 
   - `run` — execute a single `.rl` locally:
-    `relog-cli run <file.rl> [--log <level>] [--runtime {natural|reactive}] [--max_ticks N] [--delay MS]`
+    `relog-net run <file.rl> [--log <level>] [--runtime {natural|reactive}] [--max_ticks N] [--delay MS]`
   - `serve` — start the API server for a base directory or a file inside it:
-    `relog-cli serve <base-path-or-file> [--port P] [--autostart rel-file.rl] [--log <level>]`
+    `relog-net serve <base-path-or-file> [--port P] [--autostart rel-file.rl] [--log <level>]`
 
 ### Breaking
 

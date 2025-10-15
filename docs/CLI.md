@@ -1,6 +1,6 @@
-# Relog CLI
+# CLI
 
-**Binary name in all archives:** `relog-cli` (Windows: `relog-cli.exe`)
+**Binary name in all archives:** `relog-net` (Windows: `relog-net.exe`)
 
 ## Modes
 
@@ -11,7 +11,7 @@
 
 ## `run` command
 
-`relog-cli run <path-to-file.rl> [options]`
+`relog-net run <path-to-file.rl> [options]`
 
 | Arg / Flag          | Description                                | Default               |
 | ------------------- | ------------------------------------------ | --------------------- |
@@ -27,14 +27,14 @@
 **Examples**
 
 ```
-relog-cli run ./samples/hello.rl --log debug --max_ticks 1000
+relog-net run ./samples/hello.rl --log debug --max_ticks 1000
 ```
 
 ---
 
 ## `serve` command
 
-`relog-cli serve <base-path-or-file> [options]`
+`relog-net serve <base-path-or-file> [options]`
 
 | Arg / Flag                  | Description                                                   | Default |
 | --------------------------- | ------------------------------------------------------------- | ------- |
@@ -46,7 +46,7 @@ relog-cli run ./samples/hello.rl --log debug --max_ticks 1000
 **Examples**
 
 ```
-relog-cli serve ./samples --port 9000 --autostart demo.rl --log debug
+relog-net serve ./samples --port 9000 --autostart demo.rl --log debug
 ```
 
 ---
