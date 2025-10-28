@@ -1,12 +1,12 @@
-# Relog Binary License (Non-Commercial Free + Commercial License Required)
+# RelogNet Binary License (Non-Commercial Free + Commercial License Required)
 
-**License Version:** 2.0 — **Effective:** 2025-09-13
-**Applies to:** Relog binary v0.4.0 and later (the “Software”)
+**License Version:** 2.1 — **Effective:** 2025-10-26
+**Applies to:** RelogNet binary v0.4.0 and later (the “Software”)
 **Copyright:** © 2025 RelogRun. All rights reserved.
 
 ## 1. Definitions
 
-“Software” means the Relog binary (object code) and bundled materials, excluding third-party components listed in *Third-Party Notices*. “Licensor” means RelogRun. “You” means the individual or entity using the Software.
+“Software” means the RelogNet binary (object code) and bundled materials, excluding third-party components listed in *Third-Party Notices*. “Licensor” means RelogRun. “You” means the individual or entity using the Software.
 
 ## 2. Non-Commercial License (Free)
 
